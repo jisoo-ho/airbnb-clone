@@ -20,16 +20,12 @@ class AbstractItem(core_models.TimeStampedModel):
 class RoomType(AbstractItem):
     """룸타입 모델 정의"""
 
-    pass
-
     class Meta:
         verbose_name = "Room Type"
 
 
 class Amenity(AbstractItem):
     """어메니티 모델 정의"""
-
-    pass
 
     class Meta:
         verbose_name_plural = "Amenities"
@@ -38,16 +34,12 @@ class Amenity(AbstractItem):
 class Facility(AbstractItem):
     """시설 모델 정의"""
 
-    pass
-
     class Meta:
         verbose_name_plural = "Facilities"
 
 
 class HouseRule(AbstractItem):
     """이용규칙 모델 정의"""
-
-    pass
 
     class Meta:
         verbose_name = "House Rule"
@@ -95,12 +87,14 @@ class Room(core_models.TimeStampedModel):
         return self.name
 
     def save(self, *args, **kwargs):
-        print(self.city)
+        self.city = str.capitalize(self.city)
         super().save(*args, **kwargs)
 
     def total_rating(self):
-        all_reviews = self.reviews.all()  # reviews models of related name
+        all_reviews = self.reviews.all()
         all_ratings = 0
-        for review in all_reviews:
-            all_ratings += review.rating_average()
-        return all_ratings / len(all_reviews)
+        if len(all_reviews) > 0:
+            for review in all_reviews:
+                all_ratings += review.rating_average()
+            return round(all_ratings / len(all_reviews), 2)
+        return 0
