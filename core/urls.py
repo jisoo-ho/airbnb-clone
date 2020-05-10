@@ -2,5 +2,5 @@ from django.urls import path
 from rooms import views as room_views
 
 app_name = "core"
-# room_views.all_rooms : rooms>views.py 의 함수명과 같아야 한다.
-urlpatterns = [path("", room_views.all_rooms, name="home")]
+# HomeView class가 가진 as_view()함수 호출
+urlpatterns = [path("", room_views.HomeView.as_view(), name="home")]

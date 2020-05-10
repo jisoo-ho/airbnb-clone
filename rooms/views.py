@@ -1,18 +1,13 @@
-from django.shortcuts import render, redirect  # HTML 태그를 이용 가능하게 함
-from django.core.paginator import Paginator, EmptyPage
+from django.views.generic import ListView
 from . import models
 
-# from django.http import HttpResponse  # HttpResponse 객체 반환하기 위한 import
+# home.html 파일명을 room_list.html로 변경(HomeView 요구사항 충족)
+class HomeView(ListView):
 
-# 페이지 네비게이터
-def all_rooms(request):
-    page = request.GET.get("page", 1)
-    room_list = models.Room.objects.all()
-    paginator = Paginator(room_list, 10, orphans=5)
-    # orphans는 5개 미만의 데이터가 페이지에 남는 경우 이전 페이지에서 한 번에 출력
-    try:
-        rooms = paginator.page(int(page))
-        return render(request, "rooms/home.html", {"page": rooms})
-    except EmptyPage:
-        return redirect("/")
+    """ 홈 뷰 정의 """
 
+    model = models.Room  # 전체 방 목록 호출
+    paginate_by = 10  # 한 번에 보여줄 방 개수
+    paginate_orphans = 5  # 5개 미만의 방이 페이지에 있다면 이전 페이지에서 출력
+    ordering = "created"  # 생성순 정렬
+    context_object_name = "rooms"
