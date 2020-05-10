@@ -68,7 +68,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],  # templates 폴더 내부 진입 경로 설정
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
