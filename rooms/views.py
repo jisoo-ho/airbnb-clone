@@ -1,6 +1,4 @@
-from django.views.generic import ListView
-from django.http import Http404
-from django.shortcuts import render
+from django.views.generic import ListView, DetailView
 from . import models
 
 # home.html 파일명을 room_list.html로 변경(HomeView 요구사항 충족)
@@ -15,10 +13,10 @@ class HomeView(ListView):
     context_object_name = "rooms"
 
 
-# pk 값을 전달받는다.(하나의 방을 조회)
-def room_detail(requset, pk):
-    try:
-        room = models.Room.objects.get(pk=pk)
-        return render(requset, "rooms/detail.html", {"room": room})
-    except models.Room.DoesNotExist:  # 리스트에 없는 방 호출 시 메인으로 연결
-        raise Http404()
+class RoomDetail(DetailView):
+    # 장고는 DetailView를 사용하면 기본적으로 url argument로 pk를 찾는다.
+    # urlpatterns = [path("<int:pk>", <- 이부분의 pk 를 찾는다.
+
+    """ 방 조회 정의 """
+
+    model = models.Room
