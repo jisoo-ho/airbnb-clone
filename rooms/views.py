@@ -1,6 +1,6 @@
 from django.views.generic import ListView
-from django.urls import reverse
-from django.shortcuts import render, redirect
+from django.http import Http404
+from django.shortcuts import render
 from . import models
 
 # home.html 파일명을 room_list.html로 변경(HomeView 요구사항 충족)
@@ -21,4 +21,4 @@ def room_detail(requset, pk):
         room = models.Room.objects.get(pk=pk)
         return render(requset, "rooms/detail.html", {"room": room})
     except models.Room.DoesNotExist:  # 리스트에 없는 방 호출 시 메인으로 연결
-        return redirect(reverse("core:home"))
+        raise Http404()
