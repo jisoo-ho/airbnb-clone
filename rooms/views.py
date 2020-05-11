@@ -1,4 +1,5 @@
 from django.views.generic import ListView
+from django.shortcuts import render
 from . import models
 
 # home.html 파일명을 room_list.html로 변경(HomeView 요구사항 충족)
@@ -11,3 +12,8 @@ class HomeView(ListView):
     paginate_orphans = 5  # 5개 미만의 방이 페이지에 있다면 이전 페이지에서 출력
     ordering = "created"  # 생성순 정렬
     context_object_name = "rooms"
+
+
+# pk 값을 전달받는다.(하나의 방을 조회)
+def room_detail(requset, pk):
+    return render(requset, "rooms/detail.html")
