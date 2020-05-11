@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse  # url을 리턴
 from django_countries.fields import CountryField
 from core import models as core_models
 
@@ -89,6 +90,10 @@ class Room(core_models.TimeStampedModel):
     def save(self, *args, **kwargs):
         self.city = str.capitalize(self.city)
         super().save(*args, **kwargs)
+
+    # 방을 조회하는 경우 누르는 버튼 : 반환하는 URL 로 이동(view on site로 이동)
+    def get_absolute_url(self):
+        return reverse("rooms:detail", kwargs={"pk": self.pk})
 
     def total_rating(self):
         all_reviews = self.reviews.all()

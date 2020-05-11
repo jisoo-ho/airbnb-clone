@@ -1,5 +1,6 @@
 from django.views.generic import ListView
-from django.shortcuts import render
+from django.urls import reverse
+from django.shortcuts import render, redirect
 from . import models
 
 # home.html 파일명을 room_list.html로 변경(HomeView 요구사항 충족)
@@ -16,4 +17,8 @@ class HomeView(ListView):
 
 # pk 값을 전달받는다.(하나의 방을 조회)
 def room_detail(requset, pk):
-    return render(requset, "rooms/detail.html")
+    try:
+        room = models.Room.objects.get(pk=pk)
+        return render(requset, "rooms/detail.html", {"room": room})
+    except models.Room.DoesNotExist:  # 리스트에 없는 방 호출 시 메인으로 연결
+        return redirect(reverse("core:home"))
