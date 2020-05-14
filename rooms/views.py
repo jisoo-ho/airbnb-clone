@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView, View
 from django.shortcuts import render
+from django.core.paginator import Paginator  # 페이징
 from . import models, forms
 
 # home.html 파일명을 room_list.html로 변경(HomeView 요구사항 충족)
@@ -29,7 +30,10 @@ class SearchView(View):
     def get(self, request):
 
         country = request.GET.get("country")
-
+        """country에 아무것도 없다면 (else) 빈 폼을 생성한다. 
+        폼에 에러가 있다면 if문 밖에서 폼을 다시 렌더링 함.
+        폼에 에러가 없다면 정상 작동.
+        """
         if country:
 
             form = forms.SearchForm(request.GET)  # 검색한 내용을 기억하기 위한 request.GET
@@ -86,11 +90,22 @@ class SearchView(View):
                 for facility in facilities:
                     filter_args["facilities"] = facility
 
-                rooms = models.Room.objects.filter(**filter_args)
+                qs = models.Room.objects.filter(**filter_args).order_by("-created")
+
+                # 페이징 처리
+                paginator = Paginator(qs, 10, orphans=5)
+
+                page = request.GET.get("page", 1)
+
+                rooms = paginator.get_page(page)
+
+                return render(
+                    request, "rooms/search.html", {"form": form, "rooms": rooms}
+                )
 
         else:
 
             form = forms.SearchForm()
 
-        return render(request, "rooms/search.html", {"form": form, "rooms": rooms})
+        return render(request, "rooms/search.html", {"form": form})
 
