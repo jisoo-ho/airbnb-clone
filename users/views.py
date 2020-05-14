@@ -14,4 +14,5 @@ class LoginView(View):
         form = forms.LoginForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)  # 모든 필드를 정리해준 결과
+            # {'email': 'hojysoo@naver.com', 'password': '1234'} 로 확인할 수 있다.
         return render(request, "users/login.html", {"form": form})
