@@ -1,5 +1,10 @@
 <a href="{% url "core:home" %}">Nbnb</a>
 <ul>
-    <li><a href="{% url "users:login" %}">Login</a></li>
+    <!-- 쿠키를 가지고 user를 찾고 template에 자동 주입(csrf 포함) -->
+    {% if user.is_authenticated %}
+    <li><a href="{% url "users:logout" %}">Log out</a></li>
+    {% else %}
+    <li><a href="{% url "users:login" %}">Log in</a></li>
+    {% endif %}
+
 </ul>
-    
