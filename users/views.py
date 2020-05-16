@@ -2,7 +2,7 @@ from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate, login, logout
-from . import forms
+from . import forms, models
 
 
 class LoginView(FormView):
@@ -40,6 +40,20 @@ class SignUpView(FormView):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
         user = authenticate(self.request, username=email, password=password)
-        if user is not None:
+        if user is not None:  # user가 로그인 되었다면
             login(self.request, user)
+        user.verify_email()  # 이메일 전송하여 인증
         return super().form_valid(form)
+
+
+def complete_verification(request, key):
+    try:
+        user = models.User.objects.get(email_secret=key)
+        user.email_verified = True
+        user.email_secret = ""
+        user.save()
+        # 성공 메시지 추가할 것
+    except models.User.DoesNotExist:
+        # 에러 메시지 추가할 것
+        pass
+    return redirect(reverse("core:home"))
