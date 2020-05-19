@@ -37,6 +37,16 @@ class User(AbstractUser):
         (CURRENCY_KRW, "KRW"),
     )
 
+    LOGIN_EMAIL = "email"
+    LOGIN_GITHUB = "github"
+    LOGIN_KAKAO = "kakao"
+
+    LOGIN_CHOICES = (
+        (LOGIN_EMAIL, "Email"),
+        (LOGIN_GITHUB, "Github"),
+        (LOGIN_KAKAO, "Kakao"),
+    )
+
     avatar = models.ImageField(upload_to="avatars", blank=True)
     gender = models.CharField(choices=GENDER_CHOICES, max_length=10, blank=True)
     bio = models.TextField(blank=True)
@@ -52,6 +62,10 @@ class User(AbstractUser):
     email_secret = models.CharField(max_length=20, default="", blank=True)  # 이메일 인증 키
     # 이메일과 비밀번호를 이용해서 새 계정을 생성하면 email_secret 에 인증키가 생성 된다.
     # 그리고 해당 이메일로 인증키를 보낸다. 해당 키가 일치하면 인증 완료
+
+    login_method = models.CharField(
+        max_length=50, choices=LOGIN_CHOICES, default=LOGIN_EMAIL
+    )
 
     def verify_email(self):
         if self.email_verified is False:
