@@ -4,6 +4,7 @@ from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate, login, logout
+from django.core.files.base import ContentFile
 from . import forms, models
 
 
@@ -178,6 +179,13 @@ def kakao_callback(request):
             )
             user.set_unusable_password()
             user.save()
+            if profile_image is not None:
+                photo_request = requests.get(profile_image)
+                user.avatar.save(
+                    f"{nickname}-avatar",
+                    ContentFile(photo_request.content)
+                    # 장고에서 이미지 주소를 처리하는 방법
+                )
         login(request, user)
         return redirect(reverse("core:home"))
     except KakaoException:
