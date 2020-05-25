@@ -1,13 +1,12 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from . import models
 
 
 class LoginForm(forms.Form):
-    # 유저가 로그인 할 경우 이메일과 비밀번호를 입력하고 접속
-    email = forms.EmailField()
-    # 위젯을 사용하여 패스워드를 점 형태로 바꿔준다.
-    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"placeholder": "Email"}))
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"})
+    )
 
     def clean(self):
         email = self.cleaned_data.get("email")
@@ -29,13 +28,33 @@ class LoginForm(forms.Form):
             )
 
 
-class SignUpForm(UserCreationForm):
+class SignUpForm(forms.ModelForm):
     class Meta:
         model = models.User
         fields = ("first_name", "last_name", "email")
+        widgets = {
+            "first_name": forms.TextInput(attrs={"placeholder": "First Name"}),
+            "last_name": forms.TextInput(attrs={"placeholder": "Last Name"}),
+            "email": forms.EmailInput(attrs={"placeholder": "Email Name"}),
+        }
 
-    password = forms.CharField(widget=forms.PasswordInput)
-    password1 = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"})
+    )
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Confirm Password"})
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        try:
+            models.User.objects.get(email=email)
+            raise forms.ValidationError(
+                "That email is already taken", code="existing_user"
+            )
+        except models.User.DoesNotExist:
+            return email
+
 
     def clean_password1(self):
         password = self.cleaned_data.get("password")

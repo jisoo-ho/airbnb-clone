@@ -36,7 +36,6 @@ class SignUpView(FormView):
     template_name = "users/signup.html"
     form_class = forms.SignUpForm
     success_url = reverse_lazy("core:home")  # 회원가입 성공 시 이동 화면(홈)
-    initial = {"first_name": "jisoo", "last_name": "ho", "email": "hojysoo@naver.com"}
 
     def form_valid(self, form):
         form.save()  # 저장 함수 실행
